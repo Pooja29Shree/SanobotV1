@@ -1,0 +1,230 @@
+& "C:\Users\pooja.shree\AppData\Roaming\Python\Python313\Scripts\streamlit.exe" run chatbot.py
+
+command to run manually
+
+How did I build this?
+
+1)Install Python 3.8 or above
+
+2)Install Streamlit(A Python framework to build interactive web apps easily (you’ll use it for your chatbot UI))
+
+How to install?
+pip install streamlit
+
+3)Install requests(A Python library that lets you send HTTP requests, which you’ll use to talk to the GROQ API.)
+
+How to install?
+pip install requests
+
+4)Install python-dotenv(A library that helps you securely load API keys from a .env file (so your keys aren’t hardcoded in your code))
+
+How to install?
+pip install python-dotenv
+
+5)Get GROQ API Key(A special secret token that lets you use the GROQ AI models like LLaMA3. It’s like a password to access the AI)
+
+How to get it?
+*Visit https://groq.com
+*Sign up for a free account
+*Once logged in, go to the API keys section
+*Click “Generate new key”
+*Copy the key and store it safely
+
+You will later put it into a .env file like this:
+
+GROQ_API_KEY=your_secret_key_here
+
+6)Create Folder medical_chatbot
+
+medical_chatbot/
+│
+├── .env                   # Stores your API key (never push to GitHub)
+├── chatbot.py             # Main Streamlit app
+├── groq_api.py            # Handles API calls to GROQ
+└── requirements.txt       # (Optional) List of required libraries
+
+7)Code Setup Summary
+
+1. .env (stores your API key (not tracked by Git))
+GROQ_API_KEY=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
+
+2. groq_api.py (handles API interaction with GROQ)
+This file will call the GROQ API in Python:
+
+# Import necessary modules
+import os                  # To access environment variables
+import requests            # To make HTTP requests to the GROQ API
+from dotenv import load_dotenv  # To load variables from a .env file
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Get the GROQ API key from the environment
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Define a system prompt to guide the AI's behavior
+SYSTEM_PROMPT = {
+    "role": "system",
+    "content": "You are a helpful medical assistant. Never give diagnoses. Only provide general health information."
+}
+
+# Function to call the GROQ chat API with messages and return the AI's response
+def call_groq_chat(messages, model="meta-llama/llama-4-scout-17b-16e-instruct"):
+    # Set the GROQ API endpoint
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    
+    # Set the request headers including the API key
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",        # Pass the API key for authorization
+        "Content-Type": "application/json"                # Tell the server we're sending JSON data
+    }
+
+    # Define the request payload
+    payload = {
+        "model": model,           # AI model to use
+        "messages": messages,     # Full list of chat messages (including user and system messages)
+        "temperature": 0.5        # Controls randomness in response (lower = more focused)
+    }
+
+    # Make a POST request to the GROQ API
+    response = requests.post(url, headers=headers, json=payload)
+
+    # Raise an error if the request failed
+    response.raise_for_status()
+
+    # Return the AI's response content
+    return response.json()["choices"][0]["message"]["content"]
+
+
+3. chatbot.py (main Streamlit app)
+Streamlit app with session-based chat:
+
+# Import Streamlit and functions from groq_api.py
+import streamlit as st
+from groq_api import call_groq_chat, SYSTEM_PROMPT
+
+# Set the page title and layout
+st.set_page_config(page_title="🩺 Healthcare Chatbot", layout="wide")
+
+# Display the main title on the app
+st.title("AI-Powered Medical Assistant 🤖")
+
+# Initialize chat history in session state (stored across interactions)
+if "chat_history" not in st.session_state:
+    # Start the conversation with a system message (instruction for the AI)
+    st.session_state.chat_history = [SYSTEM_PROMPT]
+
+# Input box for user to type a health-related question
+user_input = st.text_input("🩺 Describe your symptoms or ask a health question:")
+
+# If the user enters a message
+if user_input:
+    # Add the user's message to the chat history
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
+
+    # Show a loading spinner while waiting for the AI to respond
+    with st.spinner("💬 Thinking..."):
+        # Call the GROQ API with the current chat history
+        reply = call_groq_chat(st.session_state.chat_history)
+
+    # Add the assistant's reply to the chat history
+    st.session_state.chat_history.append({"role": "assistant", "content": reply})
+
+# Display the conversation messages (excluding the system prompt)
+for msg in st.session_state.chat_history[1:]:
+    # Determine who sent the message (user or assistant)
+    speaker = "👨‍⚕️ Assistant" if msg["role"] == "assistant" else "🧍 You"
+
+    # Display the message using Markdown styling
+    st.markdown(f"**{speaker}:** {msg['content']}")
+
+4. requirements.txt(lists Python dependencies)
+streamlit
+requests
+python-dotenv
+
+Generate it with:
+pip freeze > requirements.txt
+5. README.md — documents what your project does
+6. .gitignore — to exclude .env and __pycache__
+
+Final folder Structure
+medical_chatbot/
+├── .env               # your secret key (not pushed to GitHub)
+├── .gitignore
+├── chatbot.py         # main Streamlit app
+├── groq_api.py        # API call logic
+├── requirements.txt   # dependencies
+└── README.md          # project overview
+
+Key Highlights
+Frontend: Streamlit app for a clean, interactive chat interface
+Backend: Python with GROQ API for AI responses
+Model Used: meta-llama/llama-4-scout-17b-16e-instruct from GROQ
+Secure API Key Handling: Managed via .env file
+Chat Memory: Uses Streamlit session state to keep conversation context
+
+How It Works
+User enters a symptom or health question
+The input is sent to GROQ's LLaMA-4 model via API
+The model generates a helpful (non-diagnostic) response
+Chat history is displayed in the app
+
+8)Run the app manually using command:
+& "C:\Users\pooja.shree\AppData\Roaming\Python\Python313\Scripts\streamlit.exe" run chatbot.py
+
+9)Push files to Git
+ *Install Git and Login
+ *Click “New Repository”
+ *Set repository name, e.g., medical_chatbot
+ *Choose:
+    *Public or Private as you prefer
+    *Leave "Initialize with README" unchecked
+ *Click Create Repository
+ *Open PowerShell,Navigate to Your Project and run these commands
+
+cd C:\medical_chatbot
+git init
+git add .
+git commit -m "Initial commit - medical chatbot"
+git remote add origin https://github.com/Pooja29Shree/medical_chatbot.git
+git branch -M main
+git push -u origin main
+
+10)Deploy using Streamlit
+*Make sure your repo (e.g., medical_chatbot) has:
+   chatbot.py
+   groq_api.py
+   .env (NOT pushed)
+   requirements.txt
+   README.md
+*Also, add a .gitignore with:
+  .env
+  __pycache__/
+*Go to: https://streamlit.io/cloud
+*Click “Sign in with GitHub”
+*Click “New App”
+*Choose your repo: Pooja29Shree/medical_chatbot
+*Set:
+   *Main file: chatbot.py
+*Click “Advanced Settings”
+   *Add a Secret Key: GROQ_API_KEY = your_real_api_key
+*Click “Deploy”
+   *In a few seconds, your chatbot will go live with a link like:
+    https://your-username-streamlit-app.streamlit.app/
+   
+11)After Deployments
+*You can share the link with anyone
+*Your .env stays secure (only added as a secret)
+*If you make code changes, just push to GitHub — Streamlit auto-updates
+
+
+
+Summary:
+
+*A simple, web-based chatbot where users can:
+*Ask general health-related questions
+*Get intelligent responses from the GROQ LLaMA-4 Scout 17B model
+*Interact via a clean UI built using Streamlit
+*Chat with context-aware history in a secure, privacy-conscious manner
+
