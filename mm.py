@@ -1,0 +1,20 @@
+"""# Frontend
+streamlit
+requests
+python-dotenv
+
+# Backend
+fastapi
+uvicorn
+sqlalchemy
+python-jose
+passlib[bcrypt]
+
+
+#fastapi==0.104.1
+#uvicorn==0.24.0
+#sqlalchemy==2.0.23
+#python-jose[cryptography]==3.3.0
+#passlib[bcrypt]==1.7.4
+#python-multipart==0.0.6
+#email-validator==2.1.0 """

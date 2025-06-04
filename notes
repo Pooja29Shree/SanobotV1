@@ -1,5 +1,8 @@
 & "C:\Users\pooja.shree\AppData\Roaming\Python\Python313\Scripts\streamlit.exe" run chatbot.py
 
+python -m uvicorn backend.main:app --reload
+
+
 command to run manually
 
 How did I build this?
@@ -228,3 +231,8 @@ Summary:
 *Interact via a clean UI built using Streamlit
 *Chat with context-aware history in a secure, privacy-conscious manner
 
+
+When you change your groq api key, remember to do this
+# Windows
+set GROQ_API_KEY=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
+streamlit run chatbot.py
