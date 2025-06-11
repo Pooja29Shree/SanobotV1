@@ -44,7 +44,7 @@ lang_map = {
     "fy": "Western Frisian", "xh": "Xhosa", "yi": "Yiddish", "yo": "Yoruba",
     "za": "Zhuang", "zu": "Zulu"
 }
-BASE_URL = "http://localhost:8000"
+BASE_URL = "https://sanobotv1-2.onrender.com"
 #Chat Interface
 st.set_page_config(page_title="Healthcare Chatbot", layout="wide")
 st.markdown(
