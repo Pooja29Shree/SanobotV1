@@ -1,9 +1,10 @@
 import os
 import requests
 from dotenv import load_dotenv
+import streamlit as st
 
-load_dotenv()
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+# Streamlit Cloud loads from st.secrets
+OPENROUTER_API_KEY = st.secrets["OPENROUTER_API_KEY"]
 
 SYSTEM_PROMPT = {
     "role": "system",
